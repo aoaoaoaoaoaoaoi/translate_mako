@@ -66,7 +66,29 @@ https://docs.makotemplates.org/en/latest/defs.html#using-blocks
 おそらくブロックが重要になってくるのは名前をつけるときです。
 名前付きブロックは、Jinja2のblockタグに近い動作をするように調整されており、継承するテンプレートでオーバーライド可能なレイアウトの領域を定義します。
 ```<%def>```タグとは対照的に、ブロックに付けられた名前は、どれだけ深く入れ子になっていても、テンプレート全体でグローバルなものとなります：
+```
+<%page args="post"/>
 
+<a name="${post.title}" />
+
+<span class="post_prose">
+    <%block name="post_prose" args="post">
+        ${post.content}
+    </%block>
+</span>
+```
+
+上記では、テンプレートが```<%include file="post.mako" args="post=post" />```のようなディレクティブで呼び出された場合、```post```変数はbodyと```post_prose```ブロックの両方で使用できます。
+
+```**pageargs```変数は、``` <%page>```タグで明示されていない引数を、名前付きブロックのみで使用できるようにするものです：
+```
+<%block name="post_prose">
+    ${pageargs['post'].content}
+</%block>
+```
+
+```args```属性は名前付きブロックのみで使用できます。
+匿名ブロック内のPython関数は常に呼び出しと同タイミングで作成されるため、匿名ブロックの外側で直接利用できるものは内側でも利用できます。
 
 
 
