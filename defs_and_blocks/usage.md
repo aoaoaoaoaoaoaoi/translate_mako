@@ -24,5 +24,38 @@ print(mytemplate.render(name="jack"))
 ```
 
 Template.render()メソッドは、Makoを呼び出してContextオブジェクトを作成します。
-このContextオブジェクトには、テンプレートにアクセス可能なすべての変数名が格納されており、出力をキャプチャするためのバッファも格納されています。
+この[Context]()オブジェクトには、テンプレートにアクセス可能なすべての変数名が格納されており、出力をキャプチャするためのバッファも格納されています。
+この[Context]()を自分で作成し、[Template.render_context()]()関数を使って、テンプレートに作成したContextを使ってレンダリングをさせることができます。
+```
+from mako.template import Template
+from mako.runtime import Context
+from StringIO import StringIO
+
+mytemplate = Template("hello, ${name}!")
+buf = StringIO()
+ctx = Context(buf, name="jack")
+mytemplate.render_context(ctx)
+print(buf.getvalue())
+```
+
+## ファイルベースのテンプレートの使用
+[Template]()は```filename```キーワード引数を使ってファイルからテンプレートのソースコードを読み込むこともできます：
+```
+from mako.template import Template
+
+mytemplate = Template(filename='/docs/mytmpl.txt')
+print(mytemplate.render())
+```
+
+パフォーマンスを向上させるために、ファイルから読み込まれた[Template]()は、生成されたモジュールのソースコードを通常のPythonモジュールファイル（.pyファイル）としてファイルシステムにキャッシュすることもできます。
+テンプレートに``` module_directory```の引数を追加するだけでできます：
+```
+from mako.template import Template
+
+mytemplate = Template(filename='/docs/mytmpl.txt', module_directory='/tmp/mako_modules')
+print(mytemplate.render())
+```
+
+上記のコードがレンダリングされると、モジュールのソースコードを含んだ``` /tmp/mako_modules/docs/mytmpl.txt.py```ファイルが作成されます。
+次回、同じ引数をもつ[Template]()を作成した場合は、このモジュールファイルが自動的に使用されます。
 
