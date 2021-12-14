@@ -59,3 +59,17 @@ print(mytemplate.render())
 上記のコードがレンダリングされると、モジュールのソースコードを含んだ``` /tmp/mako_modules/docs/mytmpl.txt.py```ファイルが作成されます。
 次回、同じ引数をもつ[Template]()を作成した場合は、このモジュールファイルが自動的に使用されます。
 
+## ```TemplateLookup```の使用
+これまでの例は1つの[Template]()オブジェクトを使用しています。
+これらのテンプレート内のコードが、別のテンプレートリソースを見つけようとする場合、単純なURI文字列を使用してそれらを見つける何らかの方法が必要になります。
+この方法として[TemplateLookup]()クラスが用意されています。
+[TemplateLookup]()クラスを使用することで、テンプレート内から他のテンプレートを見つけることができます。
+このクラスはテンプレートを探すためのディレクトリのリストと、作成する[Template]()オブジェクトへ渡すキーワード引数を与えて作成されます。
+```
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
+mylookup = TemplateLookup(directories=['/docs'])
+mytemplate = Template("""<%include file="header.txt"/> hello world!""", lookup=mylookup)
+```
+
