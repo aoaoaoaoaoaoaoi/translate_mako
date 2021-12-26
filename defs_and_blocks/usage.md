@@ -73,3 +73,5 @@ mylookup = TemplateLookup(directories=['/docs'])
 mytemplate = Template("""<%include file="header.txt"/> hello world!""", lookup=mylookup)
 ```
 
+以上のコードでは、header.txtファイルを含むテキスト形式のテンプレートを作成しました。
+TemplateLookupオブジェクトにディレクトリ/docsを渡し、header.txtを探せるようにしました。
