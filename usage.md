@@ -75,3 +75,26 @@ mytemplate = Template("""<%include file="header.txt"/> hello world!""", lookup=m
 
 以上のコードでは、header.txtファイルを含むテキスト形式のテンプレートを作成しました。
 TemplateLookupオブジェクトにディレクトリ/docsを渡し、header.txtを探せるようにしました。
+
+通常、アプリケーションはテンプレートのほとんどまたはすべてをファイルシステム上のテキストファイルとして保存します。
+ここまでの例は、基本的な概念を説明するために工夫されていました。
+しかし、実際のアプリケーションでは、TemplateLookup.get_template()という適切な名前のメソッドを使って、TemplateLookupから直接、ほとんどあるいはすべてのテンプレートを取得することになります。このメソッドでは、希望するテンプレートのURIを受け取れます：
+```python
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
+mylookup = TemplateLookup(directories=['/docs'], module_directory='/tmp/mako_modules')
+
+def serve_template(templatename, **kwargs):
+    mytemplate = mylookup.get_template(templatename)
+    print(mytemplate.render(**kwargs))
+```
+
+上記の例では、/docs ディレクトリにテンプレートを探す TemplateLookup を作成し、生成されたモジュールファイルを /tmp/mako_modules ディレクトリに保存しています。
+lookupは、与えられたURIを検索ディレクトリのそれぞれに付加してテンプレートを探します。
+したがって、/etc/beans/info.txt という URI を与えた場合、ファイル /docs/etc/beans/info.txt を検索し、それ以外の場合はカスタム Mako 例外である TopLevelNotFound 例外を出します。
+
+lookupがテンプレートを見つけるとき、TemplateLookup.get_template()呼び出しに渡されたURIであるuriプロパティもテンプレートに割り当てられます。
+テンプレートは、このURIを使ってモジュールファイルの名前を計算します。したがって、上記の例では、templatename の引数に /etc/beans/info.txt を指定すると、モジュールファイル /tmp/mako_modules/etc/beans/info.txt.py が作成されます
+
+## コレクションサイズの設定
