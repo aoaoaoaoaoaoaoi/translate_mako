@@ -98,3 +98,16 @@ lookupがテンプレートを見つけるとき、TemplateLookup.get_template()
 テンプレートは、このURIを使ってモジュールファイルの名前を計算します。したがって、上記の例では、templatename の引数に /etc/beans/info.txt を指定すると、モジュールファイル /tmp/mako_modules/etc/beans/info.txt.py が作成されます
 
 ## コレクションサイズの設定
+また、TemplateLookupは、与えられた時間にテンプレートの固定セットをメモリにキャッシュするという重要なニーズも提供します。
+そのため、連続したURI検索では、リクエストごとのテンプレートの完全コンパイルやモジュールの再ロードを行いません。
+デフォルトでは、TemplateLookupのサイズは無制限です。
+collection_size引数で固定サイズを指定することができます：
+```python
+mylookup = TemplateLookup(directories=['/docs'],
+                module_directory='/tmp/mako_modules', collection_size=500)
+```
+
+上記のlookupは、約500のカウントに達するまで、テンプレートをメモリにロードし続けます。
+その際、最低限の直近に使用されたスキームを使用して、一定の割合でテンプレートを削除します。
+
+## ファイルシステム・チェックの設定
