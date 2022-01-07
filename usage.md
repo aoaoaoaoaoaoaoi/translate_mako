@@ -116,3 +116,35 @@ TemplateLookupのもう一つの重要なフラグはfilesystem_checksです。
 実運用システムでは、filesystem_checks を False に設定することで、(使用するファイルシステムの種類によりますが) 性能が多少向上する可能性があります。
 
 ## ユニコードとエンコードの使用
+TemplateとTemplateLookupはoutput_encodingとencoding_errorsパラメータを受け取り、これを用いて出力をPythonがサポートする任意のコーデックでエンコードすることができます：
+```python
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
+mylookup = TemplateLookup(directories=['/docs'], output_encoding='utf-8', encoding_errors='replace')
+
+mytemplate = mylookup.get_template("foo.txt")
+print(mytemplate.render())
+```
+
+Python3を使用している場合、output_encoding が設定されていれば Template.render() メソッドは bytes オブジェクトを返します。
+そうでなければ、string を返します。
+
+加えて、Template.render_unicode()メソッドがあり、テンプレートの出力をPythonのunicodeオブジェクトとして、またはPython 3ではstringとして返します：
+```
+print(mytemplate.render_unicode())
+```
+
+上記の方法は、出力エンコードキーワードの引数を無視します。
+以下の方法でエンコードできます：
+```
+print(mytemplate.render_unicode().encode('utf-8', 'replace'))
+```
+
+
+Makoが任意のエンコーディングやユニコードでデータを返すことができるのは、テンプレートの基礎となる出力ストリームがPythonのunicodeオブジェクトであることを意味することに注意してください。
+この動作は、[ユニコードの章]()で詳しく説明します。
+
+## 例外処理
+
+
